@@ -85,12 +85,12 @@ bool verifyMatching(unsigned n, std::istream &taPrefs, std::istream &classPrefs,
 TEST_CASE("SimpleCase", "[RequiredTAMatching]")
 {
     std::ifstream profsin{"test1_classprefs.txt"};
-    std::ifstream tasin{"test1_classprefs.txt"};
+    std::ifstream tasin{"test1_taprefs.txt"};
     std::unordered_map<unsigned, unsigned> matching;
     constexpr unsigned NUM_TAS_and_CLASSES = 3;
  
     std::ifstream _profsin{"test1_classprefs.txt"};
-    std::ifstream _tasin{"test1_classprefs.txt"};
+    std::ifstream _tasin{"test1_taprefs.txt"};
 
     matchTAs( NUM_TAS_and_CLASSES, tasin, profsin, matching);
 
@@ -104,12 +104,12 @@ TEST_CASE("SimpleCase", "[RequiredTAMatching]")
 TEST_CASE("MoreComplexCase", "[RequiredTAMatching]")
 {
     std::ifstream profsin{"test2_classprefs.txt"};
-    std::ifstream tasin{"test2_classprefs.txt"};
+    std::ifstream tasin{"test2_taprefs.txt"};
     std::unordered_map<unsigned, unsigned> matching;
     constexpr unsigned NUM_TAS_and_CLASSES = 3;
 
     std::ifstream _profsin{"test2_classprefs.txt"};
-    std::ifstream _tasin{"test2_classprefs.txt"};
+    std::ifstream _tasin{"test2_taprefs.txt"};
 
     matchTAs( NUM_TAS_and_CLASSES, tasin, profsin, matching);
 
