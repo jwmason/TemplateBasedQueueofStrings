@@ -45,7 +45,6 @@ bool verifyMatching(unsigned n, std::istream &taPrefs, std::istream &classPrefs,
     parseFileForPreferenceLists(taPrefs, theTAPreferenceLists);
 
     // now, each class 1..n must be verified for stability. 
-
     try
     {
         for(unsigned ta{1}; ta <= n; ta++)
@@ -58,14 +57,21 @@ bool verifyMatching(unsigned n, std::istream &taPrefs, std::istream &classPrefs,
             {
                 if( theTAPreferenceLists[ta][cn] < prefNum )
                 {
-                    // then this TA prefers cn to whichClass.
-                    // but does this class prefer that TA to their own?
-                    unsigned preferenceOfTheirOwnTA{ classPreferenceLists[cn][ assignments.at(cn) ]  }; 
-
-                    if( classPreferenceLists[cn][ta] < preferenceOfTheirOwnTA )
+                    unsigned preferenceOfTheirOwnTA;
+                    bool isMatched{false};
+                    for (auto it = assignments.begin(); it != assignments.end(); ++it) {
+                       if (it->second == cn) {
+                            preferenceOfTheirOwnTA = classPreferenceLists[cn][it->first];
+                            isMatched = true;
+                            break;
+                        }
+                    }
+                
+                    if( (!isMatched) or (classPreferenceLists[cn][ta] < preferenceOfTheirOwnTA ) )
                     {
                         return false;
                     }
+
                 }
             } 
         }
@@ -75,7 +81,6 @@ bool verifyMatching(unsigned n, std::istream &taPrefs, std::istream &classPrefs,
     {
         return false; // someone wasn't mapped.
     }
-
     return true;
 }
 
