@@ -14,7 +14,16 @@ template<typename Object>
 class GenericQueue
 {
 private:
-	// fill in private member data here
+	// Declare the LinkedList struct within the GenericQueue object
+	struct Node{
+		Node(Object v)
+		: value{v}, next{nullptr}
+		{}
+		Object value;
+		Node * next;
+	};
+
+	Node * front1;
 
 
 public:
@@ -48,7 +57,7 @@ public:
 
 
 template<typename Object>
-GenericQueue<Object>::GenericQueue()
+GenericQueue<Object>::GenericQueue() : front1{nullptr}
 {
 }
 
@@ -60,43 +69,108 @@ GenericQueue<Object>::GenericQueue()
 template<typename Object>
 GenericQueue<Object>::GenericQueue(const GenericQueue & st)
 {
-
+	// If orginal is empty, nothing to copy
+	if (st.front1 == nullptr)
+	{
+		return;
+	}
+	// Make sure the copy is not updated along with the original
+	// Initialize original Node and the new copy Node. Also intialize the first string value
+	Node * org = st.front1;	
+	Node * copy = new Node(org -> value);
+	// Set the copy as the front
+	front1 = copy;
+	// Loop through each node after the first string value and copy it
+	while (org -> next != nullptr)
+	{
+		org = org -> next;
+		enqueue(org -> value);
+	}
 }
 
 template<typename Object>
 GenericQueue<Object> & GenericQueue<Object>::operator=(const GenericQueue<Object> & st)
 {
-	if( this != &st )
+	// Check if the objects are equal. If not, remove all elements and deep copy
+	if (this != & st)
 	{
-		// delete the current materials then finish the assignment operation.
-	}
+		// Loop through all Nodes and delete them
+		while (!isEmpty())
+		{
+			dequeue();
+		}
 
+		// Copy from original
+		Node * tmp = st.front1;
+		while (tmp != nullptr)
+		{
+			enqueue(tmp -> value);
+			tmp = tmp -> next;
+		}
+	}
 	return *this;
+
 
 }
 
 template<typename Object>
 GenericQueue<Object>::~GenericQueue() 
 {
+	// Goes through each Node in QueueofStrings object and deletes it
+	while (front1 != nullptr)
+	{
+		Node * tmp = front1;
+		front1 = front1->next;
+		delete tmp;
+	}
 }
 
 
 template<typename Object>
 size_t GenericQueue<Object>::size() const noexcept
 {
-	return 561; // stub, probably not the right answer.
+	// Initialize size counter and Node pointer holder
+	size_t counter = 0;
+	Node * tmp = front1;
+	// Loop through every Node and count it
+	while (tmp != nullptr)
+	{
+		counter ++;
+		tmp = tmp -> next;
+	}
+	return counter;
+
 }
 
 
 template<typename Object>
 bool GenericQueue<Object>::isEmpty() const noexcept
 {
-	return false;  // stub, probably not the right answer.
+	// If there is no Nodes, return true. Else return false.
+	if (front1 == nullptr)
+	{
+		return true;
+	}
+	return false;
 }
 
 template<typename Object>
 void GenericQueue<Object>::enqueue(const Object & elem)
 {
+	// Check if Node pointer is null. If so, create a new Node with elem. Else, Add the new Node.
+	if (nullptr == front1)
+	{
+		Node * tmp{front1};
+		front1 = new Node(elem);
+		front1 -> next = tmp;
+		return;
+	}
+	Node * tmp{front1};
+	while (tmp -> next != nullptr)
+	{
+		tmp = tmp -> next;
+	}
+	tmp -> next = new Node(elem);
 
 }
 
@@ -104,13 +178,23 @@ void GenericQueue<Object>::enqueue(const Object & elem)
 template<typename Object>
 Object & GenericQueue<Object>::front()
 {
-	throw QueueEmptyException{"Queue is Empty"};  // stub, probably not the right answer.
+	// Check if QueueOfStrings is empty. If so, throw exception. If not, return front value
+	if (isEmpty())
+	{
+		throw QueueEmptyException{"Queue is Empty"};
+	}
+	return front1 -> value;
 }
 
 template<typename Object>
 const Object & GenericQueue<Object>::front() const
 {
-	throw QueueEmptyException{"Queue is Empty"};  // stub, probably not the right answer.
+	// Check if QueueOfStrings is empty. If so, throw exception. If not, return front value
+	if (isEmpty())
+	{
+		throw QueueEmptyException{"Queue is Empty"};
+	}
+	return front1 -> value;
 }
 
 
@@ -118,7 +202,15 @@ const Object & GenericQueue<Object>::front() const
 template<typename Object>
 void GenericQueue<Object>::dequeue()
 {
-	throw QueueEmptyException{"Queue is Empty"};// stub, probably not the right answer.
+	// First check if the Queue is empty
+	if (isEmpty())
+	{
+		throw QueueEmptyException("Queue is Empty.");
+	}
+	// Move the Node pointer to the next one and delete the current Node
+	Node * tmp = front1;
+	front1 = front1 -> next;
+	delete tmp;
 }
 
 
