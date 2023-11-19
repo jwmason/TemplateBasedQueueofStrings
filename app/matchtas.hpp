@@ -4,5 +4,4 @@
 
 void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::unordered_map<unsigned, unsigned> & assignments);
 
-
 #endif

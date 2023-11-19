@@ -86,7 +86,6 @@ bool verifyMatching(unsigned n, std::istream &taPrefs, std::istream &classPrefs,
 
 
 
-
 TEST_CASE("SimpleCase", "[RequiredTAMatching]")
 {
     std::ifstream profsin{"test1_classprefs.txt"};
