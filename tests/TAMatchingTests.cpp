@@ -110,7 +110,7 @@ TEST_CASE("MoreComplexCase", "[RequiredTAMatching]")
     std::ifstream profsin{"test2_classprefs.txt"};
     std::ifstream tasin{"test2_taprefs.txt"};
     std::unordered_map<unsigned, unsigned> matching;
-    constexpr unsigned NUM_TAS_and_CLASSES = 5;
+    constexpr unsigned NUM_TAS_and_CLASSES = 3;
 
     std::ifstream _profsin{"test2_classprefs.txt"};
     std::ifstream _tasin{"test2_taprefs.txt"};

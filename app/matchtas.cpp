@@ -71,13 +71,41 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
     {
         // Get current TA and dequeue from GenericQueue object
         unsigned currentTA = unassignedTAs.front();
+        std::cout << "currentTA: " << currentTA << std::endl;
+        // unsigned currentPreference = sort(classPreferenceLists[currentTA])
         unassignedTAs.dequeue();
+
+        // Initialize best class and preference
+
+        unsigned bestClass = n + 1;
+        unsigned bestPreference = n + 1;
 
         // Find the highest-ranked class that has not rejected the currentTA
         for (const auto &entry : theTAPreferenceLists[currentTA])
         {
             unsigned currentClass = entry.first;
-            assignments[currentTA] = currentClass;
+            unsigned currentPreference = entry.second;
+
+            if (currentPreference < bestPreference)
+            {
+                bestClass = currentClass;
+                bestPreference = currentPreference;
+            }
         }
+
+        for (unsigned i = 1; i < theTAPreferenceLists[currentTA].size(); ++i)
+        {
+            // Assign arbitarily if assignments[currentTA] = 0
+            if (assignments[currentTA] == 0)
+            {
+                assignments[currentTA] = bestClass;
+                break;
+            }
+        }
+    }
+
+    for (unsigned i = 1; i < n+1; ++i)
+    {
+        std::cout << i << " : " << assignments[i] << std::endl;
     }
 }
