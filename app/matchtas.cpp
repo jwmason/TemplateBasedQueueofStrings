@@ -57,25 +57,26 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
         }
         ctr1++;
     }
+    // Matching Algorithm
+    GenericQueue<unsigned> unassignedTAs;
 
-    // For TA Preference List, {Class: Preference}
-    // For class Preference List, {TA: Preference}
-    // Make a queue of TAs
-    GenericQueue<GenericQueue<std::vector<std::unordered_map<unsigned, unsigned>>>> QueueofTAs;
-    // Loop through every TA and enqueue it and its class preferences into the QueueofTAs
-    for (unsigned i = 1; i < theTAPreferenceLists.size(); ++i)
+    // Initially, all TAs are unassigned
+    for (unsigned i = 1; i <= n; ++i)
     {
-        // Initialize a TAQueue
-        GenericQueue<std::vector<std::unordered_map<unsigned, unsigned>>> TAQueue;
+        unassignedTAs.enqueue(i);
+    }
 
-        // Iterate through theTAPreferenceLists[i] and add to each {Class: Preference} to TAQueue
-        for (const auto &entry : theTAPreferenceLists[i])
+    // Loop through all the unassigned TAs until empty
+    while (!unassignedTAs.isEmpty())
+    {
+        unsigned currentTA = unassignedTAs.front();
+        unassignedTAs.dequeue();
+
+        // Find the highest-ranked class that has not rejected the currentTA
+        for (const auto &entry : theTAPreferenceLists[currentTA])
         {
-            std::vector<std::unordered_map<unsigned, unsigned>> TAPreferences;
-            TAPreferences.push_back({{entry.first, entry.second}});
-            TAQueue.enqueue(TAPreferences);
+            unsigned currentClass = entry.first;
+            assignments[currentTA] = currentClass;
         }
-        // Enqueue TAQueue to QueueofTAs
-        QueueofTAs.enqueue(TAQueue);
     }
 }
