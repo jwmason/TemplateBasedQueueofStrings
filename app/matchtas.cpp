@@ -58,26 +58,24 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
         ctr1++;
     }
 
-    std::cout << "theTAPreferenceLists" << ":" << std::endl;
-    for (unsigned i = 1; i < theTAPreferenceLists.size(); ++i) {
-        std::cout << "Preferences for TA " << i << ": ";
-        for (const auto& entry : theTAPreferenceLists[i]) {
-            std::cout << "{" << entry.first << ": " << entry.second << "} ";
-        }
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
-
-    std::cout << "classPreferenceLists" << ":" << std::endl;
-    for (unsigned i = 1; i < classPreferenceLists.size(); ++i) {
-        std::cout << "Preferences for class " << i << ": ";
-        for (const auto& entry : classPreferenceLists[i]) {
-            std::cout << "{" << entry.first << ": " << entry.second << "} ";
-        }
-        std::cout << std::endl;
-    }
-    std::cout << std::endl;
-
     // For TA Preference List, {Class: Preference}
+    // For class Preference List, {TA: Preference}
     // Make a queue of TAs
+    GenericQueue<GenericQueue<std::vector<std::unordered_map<unsigned, unsigned>>>> QueueofTAs;
+    // Loop through every TA and enqueue it and its class preferences into the QueueofTAs
+    for (unsigned i = 1; i < theTAPreferenceLists.size(); ++i)
+    {
+        // Initialize a TAQueue
+        GenericQueue<std::vector<std::unordered_map<unsigned, unsigned>>> TAQueue;
+
+        // Iterate through theTAPreferenceLists[i] and add to each {Class: Preference} to TAQueue
+        for (const auto &entry : theTAPreferenceLists[i])
+        {
+            std::vector<std::unordered_map<unsigned, unsigned>> TAPreferences;
+            TAPreferences.push_back({{entry.first, entry.second}});
+            TAQueue.enqueue(TAPreferences);
+        }
+        // Enqueue TAQueue to QueueofTAs
+        QueueofTAs.enqueue(TAQueue);
+    }
 }
