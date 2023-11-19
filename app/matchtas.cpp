@@ -57,10 +57,10 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
         }
         ctr1++;
     }
-    // Matching Algorithm
+    // Initialize GenericQueue object
     GenericQueue<unsigned> unassignedTAs;
 
-    // Initially, all TAs are unassigned
+    // Add all the TAs to the unassigned as this is the start of it
     for (unsigned i = 1; i <= n; ++i)
     {
         unassignedTAs.enqueue(i);
@@ -69,6 +69,7 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
     // Loop through all the unassigned TAs until empty
     while (!unassignedTAs.isEmpty())
     {
+        // Get current TA and dequeue from GenericQueue object
         unsigned currentTA = unassignedTAs.front();
         unassignedTAs.dequeue();
 
