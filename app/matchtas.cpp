@@ -88,13 +88,23 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
         int currentTA = unassignedTAs.front();
         unassignedTAs.dequeue();
 
-        // Step 2b: Determine highest ranked class (maintain TA Queues) 
+        // Step 2b: Determine highest ranked class (use TA's TAQueue and remove preference after using it) 
         int highest_ranked_class = TAQueues[currentTA - 1].front();
         TAQueues[currentTA - 1].dequeue();
 
-        std::cout << "highest rank: " << highest_ranked_class << std::endl;
-        std::cout << "next front after dequeue: " << TAQueues[currentTA -1].front() << std::endl;
+        // Step 2c: That TA will request to be assigned a class
 
+        for (unsigned i = 1; i <= n; ++i) // Step 3a: If the class already has a TA, compare TAs. Keep the one that has a higher preference in classprefs
+        {
+            if (static_cast<unsigned int>(highest_ranked_class) == assignments[i] && i != static_cast<unsigned int>(currentTA)) // Check if class has TA
+            {
+                std::cout << "got run at TA: " << currentTA << std::endl;
+            }
+            else // Step 3b: If that class does not have a TA, tentatively assign
+            {
+                assignments[currentTA] = highest_ranked_class;
+            }
+        }
     }
     
     std::cout << std::endl;
