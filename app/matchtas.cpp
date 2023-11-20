@@ -14,6 +14,7 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
     // Initialize the queues to hold Class and TA preferences
     GenericQueue<GenericQueue<GenericQueue<unsigned int>>> QueueofTAs;
     std::vector< std::unordered_map<unsigned, unsigned> > classPreferenceLists(n+1);
+    std::vector< std::unordered_map<unsigned, unsigned> > theTAPreferenceLists(n+1);
 
     // Fill the queues
 
@@ -32,6 +33,7 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
         {
             unsigned conv = std::stoul(word);
             // for the current course, their ith preference is the TA who is listed, or vice versa
+            theTAPreferenceLists[ctr][prefNum] = conv;
             GenericQueue<unsigned int> rankQueue;
             rankQueue.enqueue(conv);
             TAQueue.enqueue(rankQueue);
@@ -65,6 +67,10 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
     // Assigns TA arbitrarily
     for (unsigned i = 1; i <= n; ++i)
     {
+        if (QueueofTAs.isEmpty())
+        {
+            return;
+        }
         // Get GenericQueue object from outer queue
         GenericQueue<GenericQueue<unsigned int>> TAQueues = QueueofTAs.front();
         QueueofTAs.dequeue();
@@ -79,7 +85,27 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
             // Compares the current class to every other class to see if another TA has it
             if (classRanks.front() == assignments[j])
             {
-                std::cout << "test" << std::endl;
+                // Compare using classPreferenceLists
+                int current_pref = classPreferenceLists[i][j].index;
+                int possible_pref = classPreferenceLists[i][classRanks.front()];
+
+                // If possible_TA preference is higher than current_TA, then reassign and add other TA back
+                if (possible_pref < current_pref)
+                {
+                    assignments[i] = classRanks.front();
+                    // Enqueue the TA that was replaced (current_TA)
+                    GenericQueue<GenericQueue<unsigned int>> TAQueues;
+                    for (unsigned k = 1; k <=n; ++k)
+                    {
+                        GenericQueue<unsigned int> classRanks = TAQueues.front();
+
+                        classRanks.enqueue(theTAPreferenceLists[i][k]);
+                        std::cout << "Digit " << k << " : " << theTAPreferenceLists[i][k] << std::endl;
+                    }
+                    QueueofTAs.enqueue(TAQueues);
+                    break;
+                }
+                classRanks.dequeue();
             }
         }
         // Assign TA to first pick class and remove it from the queue
