@@ -9,33 +9,35 @@
 
 // You may want to #include others that we have talked about
 
-
-void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::unordered_map<unsigned, unsigned> & assignments)
+void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::unordered_map<unsigned, unsigned> &assignments)
 {
-    // Initialize the vectors to hold Class and TA preferences
-    std::vector< std::unordered_map<unsigned, unsigned> > theTAPreferenceLists(n+1);
-    std::vector< std::unordered_map<unsigned, unsigned> > classPreferenceLists(n+1);
+    // Initialize the queues to hold Class and TA preferences
+    GenericQueue<GenericQueue<GenericQueue<unsigned int>>> QueueofTAs;
 
-    // Fill the vectors
+    // Fill the queues
 
     // TA Preferences
     std::string line, word;
     std::stringstream ss;
 
     unsigned ctr{1};
-    while(  getline(taPrefs, line) )
+    while (getline(taPrefs, line))
     {
         unsigned prefNum{1};
         ss.clear();
         ss << line;
-        while( ss >> word )
+        GenericQueue<GenericQueue<unsigned int>> TAQueue;
+        while (ss >> word)
         {
-            unsigned conv = std::stoul( word );   // what is their ith preference?  That is conv.
+            unsigned conv = std::stoul(word);
             // for the current course, their ith preference is the TA who is listed, or vice versa
-            theTAPreferenceLists[ctr][prefNum] = conv;
+            GenericQueue<unsigned int> rankQueue;
+            rankQueue.enqueue(conv);
+            TAQueue.enqueue(rankQueue);
             prefNum++;
         }
 
+        QueueofTAs.enqueue(TAQueue);
         ctr++;
     }
 
@@ -44,55 +46,40 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
     std::stringstream ss1;
 
     unsigned ctr1{1};
-    while(  getline(classPrefs, line1) )
+    while (getline(classPrefs, line1))
     {
         unsigned prefNum1{1};
         ss1.clear();
         ss1 << line1;
-        while( ss1 >> word1 )
+        GenericQueue<GenericQueue<unsigned int>> classQueue;
+        while (ss1 >> word1)
         {
-            unsigned conv1 = std::stoul( word1 );   // what is their ith preference?  That is conv.
+            unsigned conv1 = std::stoul(word1);
             // for the current course, their ith preference is the TA who is listed, or vice versa
-            classPreferenceLists[ctr1][prefNum1] = conv1;
+            GenericQueue<unsigned int> rankQueue;
+            rankQueue.enqueue(conv1);
+            classQueue.enqueue(rankQueue);
             prefNum1++;
         }
+
+        QueueofTAs.enqueue(classQueue);
         ctr1++;
-    }
-
-    // Initialize GenericQueue object
-    GenericQueue<GenericQueue<std::vector<unsigned int>>> QueueofTAs;
-
-    // Add all the TAs as GenericQueue objects and attribute to them the class ranks
-    for (unsigned i = 1; i <= n; ++i)
-    {
-        GenericQueue<std::vector<unsigned int>> TAQueues;
-        // enqueue all the class ranks to the TAQueues object
-        for (unsigned j = 1; j <= theTAPreferenceLists[i].size(); ++j)
-        {
-            int class_Rank = theTAPreferenceLists[i][j];
-            std::vector<unsigned int> rankVector;
-            // Assuming class_Rank is an integer representing a rank
-            rankVector.push_back(static_cast<unsigned int>(class_Rank));
-            TAQueues.enqueue(rankVector);
-        }
-        // Enqueue TAQueues into QueueofTAs
-        QueueofTAs.enqueue(TAQueues);
     }
 
     // Assigns TA arbitrarily
     for (unsigned i = 1; i <= n; ++i)
     {
-        // Get GenericQueue object from vector
-        GenericQueue<std::vector<unsigned int>> TAQueues = QueueofTAs.front();
+        // Get GenericQueue object from outer queue
+        GenericQueue<GenericQueue<unsigned int>> TAQueues = QueueofTAs.front();
         QueueofTAs.dequeue();
 
-        // Print the class ranks for the current TA
-        std::vector<unsigned int> classRanks = TAQueues.front();
+        // Get GenericQueue object from inner queue
+        GenericQueue<unsigned int> classRanks = TAQueues.front();
         TAQueues.dequeue();
 
-        // Assign TA to first pick class and remove it from the vector
-        assignments[i] = classRanks[0];
-        classRanks.erase(classRanks.begin());
+        // Assign TA to first pick class and remove it from the queue
+        assignments[i] = classRanks.front();
+        classRanks.dequeue();
     }
 
     for (unsigned i = 1; i <= n; ++i)
@@ -100,6 +87,4 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
         std::cout << i << " : " << assignments[i] << std::endl;
     }
     std::cout << "\n";
-
-
 }
