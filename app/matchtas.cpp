@@ -13,6 +13,7 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
 {
     // Initialize the queues to hold Class and TA preferences
     GenericQueue<GenericQueue<GenericQueue<unsigned int>>> QueueofTAs;
+    std::vector< std::unordered_map<unsigned, unsigned> > classPreferenceLists(n+1);
 
     // Fill the queues
 
@@ -46,23 +47,18 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
     std::stringstream ss1;
 
     unsigned ctr1{1};
-    while (getline(classPrefs, line1))
+    while(  getline(classPrefs, line1) )
     {
         unsigned prefNum1{1};
         ss1.clear();
         ss1 << line1;
-        GenericQueue<GenericQueue<unsigned int>> classQueue;
-        while (ss1 >> word1)
+        while( ss1 >> word1 )
         {
-            unsigned conv1 = std::stoul(word1);
+            unsigned conv1 = std::stoul( word1 );   // what is their ith preference?  That is conv.
             // for the current course, their ith preference is the TA who is listed, or vice versa
-            GenericQueue<unsigned int> rankQueue;
-            rankQueue.enqueue(conv1);
-            classQueue.enqueue(rankQueue);
+            classPreferenceLists[ctr1][prefNum1] = conv1;
             prefNum1++;
         }
-
-        QueueofTAs.enqueue(classQueue);
         ctr1++;
     }
 
@@ -77,6 +73,15 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
         GenericQueue<unsigned int> classRanks = TAQueues.front();
         TAQueues.dequeue();
 
+        // If Class has already been assigned a TA, determine which should get it
+        for (unsigned j = 1; j <= n; ++j)
+        {
+            // Compares the current class to every other class to see if another TA has it
+            if (classRanks.front() == assignments[j])
+            {
+                std::cout << "test" << std::endl;
+            }
+        }
         // Assign TA to first pick class and remove it from the queue
         assignments[i] = classRanks.front();
         classRanks.dequeue();
