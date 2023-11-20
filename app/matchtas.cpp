@@ -69,9 +69,16 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
 
     // Step 2: Loop until all TAs are assigned
 
+    while (!unassignedTAs.isEmpty())
+    {
         // Step 2a: Choose a TA arbitrarily (dequeue)
+        int currentTA = unassignedTAs.front();
+        unassignedTAs.dequeue();
+
+
 
         // Step 2b: Determine highest ranked class (maintain TA Queues) 
+    }
     
 
 
