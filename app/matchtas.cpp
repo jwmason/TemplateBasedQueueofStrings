@@ -4,8 +4,6 @@
 #include "matchtas.hpp"
 
 #include <sstream>
-#include <string>
-#include <iostream>
 
 // You may want to #include others that we have talked about
 
@@ -57,18 +55,6 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
         ctr1++;
     }
 
-    // Printing the contents of classPreferenceLists
-    std::cout << "Contents of classPreferenceLists:" << std::endl;
-    for (unsigned i = 1; i <= n; ++i)
-    {
-        std::cout << "Class " << i << ": ";
-        for (const auto& pair : classPreferenceLists[i])
-        {
-            std::cout << "Preference " << pair.second << " -> TA " << pair.first << ", ";
-        }
-        std::cout << std::endl;
-    }
-
     // Step 1a: Make a Queue of TAs (just the numbers)
 
     GenericQueue<int> unassignedTAs;
@@ -92,8 +78,6 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
         TAQueues.push_back(TAQueue);
     }
 
-    // Step 1c: Make a 
-
     // Step 2: Loop until all TAs are assigned
 
     while (!unassignedTAs.isEmpty())
@@ -112,9 +96,7 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
         {
             if (static_cast<unsigned int>(highest_ranked_class) == assignments[i] && i != static_cast<unsigned int>(currentTA)) // Check if class has TA
             {
-                // Find out what TA the class prefers
-                
-                int current_pref = classPreferenceLists[highest_ranked_class][i];
+                int current_pref = classPreferenceLists[highest_ranked_class][i]; // Find out what TA the class prefers
                 int possible_pref = classPreferenceLists[highest_ranked_class][currentTA];
 
                 if (possible_pref < current_pref) // if possible is better than current, switch and add current back to unassignedTAs
@@ -133,12 +115,4 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
             }
         }
     }
-    
-    std::cout << std::endl;
-
-    for (unsigned i = 1; i <= n; ++i)
-    {
-        std::cout << i << " : " << assignments[i] << std::endl;
-    }
-    std::cout << "\n";
 }
