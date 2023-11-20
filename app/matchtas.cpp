@@ -51,10 +51,22 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
         {
             unsigned conv1 = std::stoul( word1 );   // what is their ith preference?  That is conv.
             // for the current course, their ith preference is the TA who is listed, or vice versa
-            classPreferenceLists[ctr1][prefNum1] = conv1;
+            classPreferenceLists[ctr1][conv1] = prefNum1;
             prefNum1++;
         }
         ctr1++;
+    }
+
+    // Printing the contents of classPreferenceLists
+    std::cout << "Contents of classPreferenceLists:" << std::endl;
+    for (unsigned i = 1; i <= n; ++i)
+    {
+        std::cout << "Class " << i << ": ";
+        for (const auto& pair : classPreferenceLists[i])
+        {
+            std::cout << "Preference " << pair.second << " -> TA " << pair.first << ", ";
+        }
+        std::cout << std::endl;
     }
 
     // Step 1a: Make a Queue of TAs (just the numbers)
@@ -80,6 +92,8 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
         TAQueues.push_back(TAQueue);
     }
 
+    // Step 1c: Make a 
+
     // Step 2: Loop until all TAs are assigned
 
     while (!unassignedTAs.isEmpty())
@@ -98,7 +112,20 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
         {
             if (static_cast<unsigned int>(highest_ranked_class) == assignments[i] && i != static_cast<unsigned int>(currentTA)) // Check if class has TA
             {
-                std::cout << "got run at TA: " << currentTA << std::endl;
+                // Find out what TA the class prefers
+                
+                int current_pref = classPreferenceLists[highest_ranked_class][i];
+                int possible_pref = classPreferenceLists[highest_ranked_class][currentTA];
+
+                if (possible_pref < current_pref) // if possible is better than current, switch and add current back to unassignedTAs
+                {
+                    assignments[currentTA] = highest_ranked_class;
+                    unassignedTAs.enqueue(i);
+                }
+                else // If it is not a better match, go on to the next preference
+                {
+                    TAQueues[currentTA - 1].dequeue();
+                }
             }
             else // Step 3b: If that class does not have a TA, tentatively assign
             {
