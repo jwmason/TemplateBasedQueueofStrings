@@ -89,8 +89,11 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
         unassignedTAs.dequeue();
 
         // Step 2b: Determine highest ranked class (maintain TA Queues) 
-        int highest_ranked_class = theTAPreferenceLists[currentTA][1];
-        std::cout << highest_ranked_class << " ";
+        int highest_ranked_class = TAQueues[currentTA - 1].front();
+        TAQueues[currentTA - 1].dequeue();
+
+        std::cout << "highest rank: " << highest_ranked_class << std::endl;
+        std::cout << "next front after dequeue: " << TAQueues[currentTA -1].front() << std::endl;
 
     }
     
