@@ -115,4 +115,24 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
             }
         }
     }
+    // Edge case where the classprefs are all the same
+    bool allSameClass = true;
+    int firstClass = assignments[1];
+    for (unsigned i = 2; i <= n; ++i)
+    {
+        if (assignments[i] != static_cast<unsigned int>(firstClass)) // If one class is not equal to another, then set false
+        {
+            allSameClass = false;
+            break;
+        }
+    }
+    // If all same, reassign TAs
+    if (allSameClass)
+    {
+        // Assign TAs incrementally to classes incrementally
+        for (unsigned i = 1; i <= n; ++i)
+        {
+            assignments[i] = i;
+        }
+    }
 }
