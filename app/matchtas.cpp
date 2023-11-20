@@ -27,7 +27,6 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
         unsigned prefNum{1};
         ss.clear();
         ss << line;
-        GenericQueue<GenericQueue<unsigned int>> TAQueue;
         while (ss >> word)
         {
             unsigned conv = std::stoul(word);
@@ -58,13 +57,27 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
         ctr1++;
     }
 
-    // Step 1: Make a Queue of TAs (just the numbers)
+    // Step 1a: Make a Queue of TAs (just the numbers)
 
     GenericQueue<int> unassignedTAs;
 
     for (unsigned i = 1; i <= n; ++i) // Add all the TAs to the unassigned
     {
         unassignedTAs.enqueue(i);
+    }
+
+    // Step 1b: Make a TAQueues (a vector of queues) [TAQueues starts at 0 for TA 1]
+
+    std::vector<GenericQueue<int>> TAQueues;
+
+    for (unsigned i = 1; i <= n; ++i)
+    {
+        GenericQueue<int> TAQueue; // Initialize each TA to have a TAQueue
+        for (unsigned j = 1; j <= n; ++j)
+        {
+            TAQueue.enqueue(theTAPreferenceLists[i][j]); // i = TA #, j = Index for class wanted
+        }
+        TAQueues.push_back(TAQueue);
     }
 
     // Step 2: Loop until all TAs are assigned
@@ -75,12 +88,13 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
         int currentTA = unassignedTAs.front();
         unassignedTAs.dequeue();
 
-
-
         // Step 2b: Determine highest ranked class (maintain TA Queues) 
+        int highest_ranked_class = theTAPreferenceLists[currentTA][1];
+        std::cout << highest_ranked_class << " ";
+
     }
     
-
+    std::cout << std::endl;
 
     for (unsigned i = 1; i <= n; ++i)
     {
