@@ -35,6 +35,7 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
             theTAPreferenceLists[ctr][conv] = prefNum;
             prefNum++;
         }
+
         ctr++;
     }
 
@@ -59,43 +60,37 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
     }
 
     // Initialize GenericQueue object
-    GenericQueue<GenericQueue<std::vector<unsigned int>>> QueueofTAs;
+    GenericQueue<unsigned> unassignedTAs;
 
-    // Add all the TAs as GenericQueue objects and attribute to them the class ranks
+    // Add all the TAs to the unassigned as this is the start of it
     for (unsigned i = 1; i <= n; ++i)
     {
-        GenericQueue<std::vector<unsigned int>> TAQueues;
-        // enqueue all the class ranks to the TAQueues object
-        for (unsigned j = 1; j <= theTAPreferenceLists[i].size(); ++j)
-        {
-            int class_Rank = theTAPreferenceLists[i][j];
-            std::vector<unsigned int> rankVector;
-            // Assuming class_Rank is an integer representing a rank
-            rankVector.push_back(static_cast<unsigned int>(class_Rank));
-            TAQueues.enqueue(rankVector);
-        }
-        // Enqueue TAQueues into QueueofTAs
-        QueueofTAs.enqueue(TAQueues);
+        unassignedTAs.enqueue(i);
     }
 
-    for (unsigned i = 1; i <= n; ++i)
+    // Loop through all the unassigned TAs until empty
+    while (!unassignedTAs.isEmpty())
     {
-        // Retrieve the GenericQueue<std::vector<unsigned int>> for the current TA
-        GenericQueue<std::vector<unsigned int>> TAQueues = QueueofTAs.front();
-        QueueofTAs.dequeue();
+        // Get current TA and dequeue from GenericQueue object
+        unsigned currentTA = unassignedTAs.front();
+        unassignedTAs.dequeue();
 
-        // Print the class ranks for the current TA
-        std::cout << "Class Ranks for TA " << i << ":\n";
-        while (!TAQueues.isEmpty())
+        // Find the highest-ranked class that has not rejected the currentTA
+        for (const auto &entry : theTAPreferenceLists[currentTA])
         {
-            std::vector<unsigned int> classRanks = TAQueues.front();
-            TAQueues.dequeue();
-
-            for (unsigned rank : classRanks)
+            unsigned currentClass = entry.first;
+            for (unsigned i = 1; i <= n; ++i)
             {
-                std::cout << rank << " ";
+                if (assignments[i] == currentClass)
+                {
+                    std::cout << "Found dup" << std::endl;
+                }
             }
+            assignments[currentTA] = currentClass;
+            std::cout << currentTA << " : " << currentClass << std::endl;
         }
-        std::cout << "\n";
     }
+
+
+
 }
