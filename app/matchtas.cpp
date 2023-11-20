@@ -79,25 +79,27 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
         QueueofTAs.enqueue(TAQueues);
     }
 
+    // Assigns TA arbitrarily
     for (unsigned i = 1; i <= n; ++i)
     {
-        // Retrieve the GenericQueue<std::vector<unsigned int>> for the current TA
+        // Get GenericQueue object from vector
         GenericQueue<std::vector<unsigned int>> TAQueues = QueueofTAs.front();
         QueueofTAs.dequeue();
 
         // Print the class ranks for the current TA
-        std::cout << "Class Ranks for TA " << i << ":\n";
-        while (!TAQueues.isEmpty())
-        {
-            std::vector<unsigned int> classRanks = TAQueues.front();
-            TAQueues.dequeue();
+        std::vector<unsigned int> classRanks = TAQueues.front();
+        TAQueues.dequeue();
 
-            for (unsigned rank : classRanks)
-            {
-                std::cout << rank << " ";
-            }
-        }
-        std::cout << "\n";
+        // Assign TA to first pick class and remove it from the vector
+        assignments[i] = classRanks[0];
+        classRanks.erase(classRanks.begin());
     }
+
+    for (unsigned i = 1; i <= n; ++i)
+    {
+        std::cout << i << " : " << assignments[i] << std::endl;
+    }
+    std::cout << "\n";
+
 
 }

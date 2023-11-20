@@ -25,6 +25,8 @@ private:
 
 	Node * front1;
 
+	size_t index;
+
 
 public:
 	GenericQueue();
@@ -49,6 +51,10 @@ public:
 
 	// does not return anything.  Just removes. 
 	void dequeue();
+
+	void setIndex(size_t idx);
+	size_t getIndex() const noexcept;
+
 };
 
 
@@ -211,6 +217,20 @@ void GenericQueue<Object>::dequeue()
 	Node * tmp = front1;
 	front1 = front1 -> next;
 	delete tmp;
+}
+
+template<typename Object>
+void GenericQueue<Object>::setIndex(size_t idx)
+{
+	// Set the index value
+	index = idx;
+}
+
+template<typename Object>
+size_t GenericQueue<Object>::getIndex() const noexcept
+{
+	// Return the index value
+	return index;
 }
 
 
