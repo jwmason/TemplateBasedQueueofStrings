@@ -32,7 +32,7 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
         {
             unsigned conv = std::stoul( word );   // what is their ith preference?  That is conv.
             // for the current course, their ith preference is the TA who is listed, or vice versa
-            theTAPreferenceLists[ctr][conv] = prefNum;
+            theTAPreferenceLists[ctr][prefNum] = conv;
             prefNum++;
         }
 
@@ -53,44 +53,51 @@ void matchTAs(unsigned n, std::istream &taPrefs, std::istream &classPrefs, std::
         {
             unsigned conv1 = std::stoul( word1 );   // what is their ith preference?  That is conv.
             // for the current course, their ith preference is the TA who is listed, or vice versa
-            classPreferenceLists[ctr1][conv1] = prefNum1;
+            classPreferenceLists[ctr1][prefNum1] = conv1;
             prefNum1++;
         }
         ctr1++;
     }
 
     // Initialize GenericQueue object
-    GenericQueue<unsigned> unassignedTAs;
+    GenericQueue<GenericQueue<std::vector<unsigned int>>> QueueofTAs;
 
-    // Add all the TAs to the unassigned as this is the start of it
+    // Add all the TAs as GenericQueue objects and attribute to them the class ranks
     for (unsigned i = 1; i <= n; ++i)
     {
-        unassignedTAs.enqueue(i);
-    }
-
-    // Loop through all the unassigned TAs until empty
-    while (!unassignedTAs.isEmpty())
-    {
-        // Get current TA and dequeue from GenericQueue object
-        unsigned currentTA = unassignedTAs.front();
-        unassignedTAs.dequeue();
-
-        // Find the highest-ranked class that has not rejected the currentTA
-        for (const auto &entry : theTAPreferenceLists[currentTA])
+        GenericQueue<std::vector<unsigned int>> TAQueues;
+        // enqueue all the class ranks to the TAQueues object
+        for (unsigned j = 1; j <= theTAPreferenceLists[i].size(); ++j)
         {
-            unsigned currentClass = entry.first;
-            for (unsigned i = 1; i <= n; ++i)
-            {
-                if (assignments[i] == currentClass)
-                {
-                    std::cout << "Found dup" << std::endl;
-                }
-            }
-            assignments[currentTA] = currentClass;
-            std::cout << currentTA << " : " << currentClass << std::endl;
+            int class_Rank = theTAPreferenceLists[i][j];
+            std::vector<unsigned int> rankVector;
+            // Assuming class_Rank is an integer representing a rank
+            rankVector.push_back(static_cast<unsigned int>(class_Rank));
+            TAQueues.enqueue(rankVector);
         }
+        // Enqueue TAQueues into QueueofTAs
+        QueueofTAs.enqueue(TAQueues);
     }
 
+    for (unsigned i = 1; i <= n; ++i)
+    {
+        // Retrieve the GenericQueue<std::vector<unsigned int>> for the current TA
+        GenericQueue<std::vector<unsigned int>> TAQueues = QueueofTAs.front();
+        QueueofTAs.dequeue();
 
+        // Print the class ranks for the current TA
+        std::cout << "Class Ranks for TA " << i << ":\n";
+        while (!TAQueues.isEmpty())
+        {
+            std::vector<unsigned int> classRanks = TAQueues.front();
+            TAQueues.dequeue();
+
+            for (unsigned rank : classRanks)
+            {
+                std::cout << rank << " ";
+            }
+        }
+        std::cout << "\n";
+    }
 
 }

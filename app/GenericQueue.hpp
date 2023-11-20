@@ -21,7 +21,6 @@ private:
 		{}
 		Object value;
 		Node * next;
-		size_t ta_num;
 	};
 
 	Node * front1;
@@ -50,8 +49,6 @@ public:
 
 	// does not return anything.  Just removes. 
 	void dequeue();
-
-	size_t TA_num() const noexcept;
 };
 
 
@@ -214,13 +211,6 @@ void GenericQueue<Object>::dequeue()
 	Node * tmp = front1;
 	front1 = front1 -> next;
 	delete tmp;
-}
-
-
-template<typename Object>
-size_t GenericQueue<Object>::TA_num() const noexcept
-{
-	return front1->ta_num;
 }
 
 
